@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Xisto — The Stack is Broken</title>
   <meta name="description" content="AI built layer by layer. Xisto collapses the stack." />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
@@ -10,35 +10,41 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:      #000000;
-      --cyan:    #00ffff;
-      --pink:    #ff006e;
-      --yellow:  #ffe600;
-      --white:   #ffffff;
-      --dim:     #333333;
-      --dimtext: #555555;
+      --bg:     #000000;
+      --cyan:   #00ffff;
+      --pink:   #ff006e;
+      --yellow: #ffe600;
+      --white:  #ffffff;
+      --dim:    #222222;
+      --muted:  #444444;
     }
 
-    html, body {
-      width: 100%; height: 100%;
-      overflow: hidden;
+    html {
+      height: -webkit-fill-available;
     }
 
     body {
       font-family: 'Courier New', 'Courier', monospace;
       background: var(--bg);
       color: var(--white);
+      /* use dvh with fallback */
+      height: 100vh;
+      height: 100dvh;
+      max-height: -webkit-fill-available;
+      overflow: hidden;
+      overscroll-behavior: none;
       display: flex;
       flex-direction: column;
-      position: relative;
+      position: fixed;
+      inset: 0;
     }
 
-    /* DOT GRID BACKGROUND */
+    /* DOT GRID */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ccircle cx='1' cy='1' r='1' fill='%23ffffff' opacity='0.04'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Ccircle cx='1' cy='1' r='1' fill='%23ffffff' opacity='0.05'/%3E%3C/svg%3E");
       pointer-events: none;
       z-index: 0;
     }
@@ -48,7 +54,7 @@
       content: '';
       position: fixed;
       inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='4'%3E%3Crect width='1' height='2' fill='%23000000' opacity='0.18'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='4'%3E%3Crect width='1' height='2' fill='%23000' opacity='0.2'/%3E%3C/svg%3E");
       pointer-events: none;
       z-index: 99;
     }
@@ -57,17 +63,18 @@
     nav {
       position: relative;
       z-index: 10;
+      flex-shrink: 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 1.25rem 2rem;
+      padding: 0.9rem 1.5rem;
       border-bottom: 1px solid var(--dim);
     }
 
     .logo {
-      font-size: 1rem;
+      font-size: 0.85rem;
       font-weight: bold;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--white);
     }
@@ -76,22 +83,21 @@
     .nav-right {
       display: flex;
       align-items: center;
-      gap: 2rem;
+      gap: 1.5rem;
     }
 
     .status {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      font-size: 0.65rem;
+      gap: 0.4rem;
+      font-size: 0.6rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--dimtext);
+      color: var(--muted);
     }
 
     .status-dot {
-      width: 6px;
-      height: 6px;
+      width: 5px; height: 5px;
       background: var(--cyan);
       box-shadow: 0 0 6px var(--cyan);
       animation: blink 1s step-end infinite;
@@ -105,185 +111,135 @@
     .nav-btn {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
+      gap: 0.4rem;
+      padding: 0.4rem 0.85rem;
       border: 1px solid var(--cyan);
       background: transparent;
       color: var(--cyan);
       font-family: inherit;
-      font-size: 0.7rem;
+      font-size: 0.6rem;
       font-weight: bold;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.15em;
       text-transform: uppercase;
       text-decoration: none;
       cursor: pointer;
       transition: background 0.1s, color 0.1s;
     }
-    .nav-btn:hover {
-      background: var(--cyan);
-      color: var(--bg);
-    }
+    .nav-btn:hover { background: var(--cyan); color: var(--bg); }
 
     /* ── MAIN ── */
     main {
       position: relative;
       z-index: 10;
       flex: 1;
+      min-height: 0;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 2rem;
-      text-align: center;
-      gap: 0;
+      padding: 1rem 1.5rem;
     }
 
-    /* CORNER BRACKETS */
     .frame {
       position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 2rem;
-      padding: 3rem 2.5rem;
+      gap: 1.1rem;
+      padding: 1.5rem 1.5rem;
+      width: 100%;
+      max-width: 500px;
     }
 
-    .frame::before,
-    .frame::after {
+    /* CORNER BRACKETS */
+    .frame::before, .frame::after,
+    .frame-tr, .frame-bl {
       content: '';
       position: absolute;
-      width: 24px;
-      height: 24px;
+      width: 18px; height: 18px;
     }
-    .frame::before {
-      top: 0; left: 0;
-      border-top: 2px solid var(--cyan);
-      border-left: 2px solid var(--cyan);
-    }
-    .frame::after {
-      bottom: 0; right: 0;
-      border-bottom: 2px solid var(--cyan);
-      border-right: 2px solid var(--cyan);
-    }
+    .frame::before { top:0; left:0;  border-top:2px solid var(--cyan); border-left:2px solid var(--cyan); }
+    .frame::after  { bottom:0; right:0; border-bottom:2px solid var(--cyan); border-right:2px solid var(--cyan); }
+    .frame-tr      { top:0; right:0; border-top:2px solid var(--cyan); border-right:2px solid var(--cyan); }
+    .frame-bl      { bottom:0; left:0; border-bottom:2px solid var(--cyan); border-left:2px solid var(--cyan); }
 
-    .frame-corner-tr,
-    .frame-corner-bl {
-      position: absolute;
-      width: 24px;
-      height: 24px;
-    }
-    .frame-corner-tr {
-      top: 0; right: 0;
-      border-top: 2px solid var(--cyan);
-      border-right: 2px solid var(--cyan);
-    }
-    .frame-corner-bl {
-      bottom: 0; left: 0;
-      border-bottom: 2px solid var(--cyan);
-      border-left: 2px solid var(--cyan);
-    }
-
-    /* EYEBROW */
     .eyebrow {
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
+      font-size: 0.58rem;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--dimtext);
+      color: var(--muted);
+      text-align: center;
     }
     .eyebrow span { color: var(--yellow); }
 
-    /* HEADLINE */
     h1 {
-      font-size: clamp(2.6rem, 8vw, 6rem);
+      font-size: clamp(2rem, 10vw, 4.5rem);
       font-weight: bold;
       line-height: 0.95;
       letter-spacing: -0.01em;
       text-transform: uppercase;
-      color: var(--white);
-      position: relative;
+      text-align: center;
     }
 
-    h1 .glitch {
+    .glitch {
       display: block;
-      position: relative;
       color: var(--white);
       animation: glitch 4s infinite;
     }
 
-    h1 .accent {
+    .accent {
       display: block;
       color: var(--cyan);
-      text-shadow: 0 0 20px var(--cyan), 0 0 40px var(--cyan);
+      text-shadow: 0 0 16px var(--cyan), 0 0 32px var(--cyan);
     }
 
     @keyframes glitch {
-      0%, 88%, 100% {
-        text-shadow: none;
-        transform: translate(0);
-      }
-      89% {
-        text-shadow: -3px 0 var(--pink);
-        transform: translate(3px, 0);
-      }
-      90% {
-        text-shadow: 3px 0 var(--cyan);
-        transform: translate(-3px, 0);
-      }
-      91% {
-        text-shadow: none;
-        transform: translate(0);
-      }
-      92% {
-        text-shadow: -2px 0 var(--pink);
-        transform: translate(2px, 0);
-      }
-      93% {
-        text-shadow: none;
-        transform: translate(0);
-      }
+      0%,88%,100% { text-shadow:none; transform:translate(0); }
+      89% { text-shadow:-3px 0 var(--pink); transform:translate(3px,0); }
+      90% { text-shadow:3px 0 var(--cyan); transform:translate(-3px,0); }
+      91% { text-shadow:none; transform:translate(0); }
+      92% { text-shadow:-2px 0 var(--pink); transform:translate(2px,0); }
+      93% { text-shadow:none; transform:translate(0); }
     }
 
-    /* SUB */
     .sub {
-      font-size: clamp(0.7rem, 1.8vw, 0.9rem);
-      letter-spacing: 0.08em;
-      color: var(--dimtext);
+      font-size: clamp(0.58rem, 1.6vw, 0.75rem);
+      letter-spacing: 0.07em;
+      color: var(--muted);
       text-transform: uppercase;
-      max-width: 38ch;
+      text-align: center;
+      line-height: 1.7;
     }
     .sub strong { color: var(--white); font-weight: normal; }
 
-    /* FORM */
     form {
       display: flex;
-      gap: 0;
       width: 100%;
-      max-width: 440px;
+      max-width: 400px;
     }
 
     form input[type="email"] {
       flex: 1;
-      padding: 0.75rem 1rem;
-      background: #0a0a0a;
+      padding: 0.65rem 0.85rem;
+      background: #080808;
       border: 1px solid var(--dim);
       border-right: none;
       color: var(--white);
       font-family: inherit;
-      font-size: 0.8rem;
-      letter-spacing: 0.05em;
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
       outline: none;
-      transition: border-color 0.15s;
+      min-width: 0;
     }
-    form input[type="email"]::placeholder { color: var(--dimtext); }
+    form input[type="email"]::placeholder { color: var(--muted); }
     form input[type="email"]:focus { border-color: var(--cyan); }
 
     form button {
-      padding: 0.75rem 1.25rem;
+      padding: 0.65rem 1rem;
       background: var(--cyan);
       border: 1px solid var(--cyan);
       color: var(--bg);
       font-family: inherit;
-      font-size: 0.7rem;
+      font-size: 0.6rem;
       font-weight: bold;
       letter-spacing: 0.15em;
       text-transform: uppercase;
@@ -291,53 +247,104 @@
       white-space: nowrap;
       transition: background 0.1s, color 0.1s;
     }
-    form button:hover {
-      background: var(--bg);
-      color: var(--cyan);
-    }
+    form button:hover { background: var(--bg); color: var(--cyan); }
 
     #msg {
-      font-size: 0.65rem;
+      font-size: 0.58rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--cyan);
-      height: 1em;
+      min-height: 0.8em;
+      text-align: center;
     }
 
-    /* ── BOTTOM BAR ── */
+    /* ── FOOTER ── */
     footer {
       position: relative;
       z-index: 10;
+      flex-shrink: 0;
+      border-top: 1px solid var(--dim);
+      overflow: hidden;
+    }
+
+    /* TOP ROW: static stats */
+    .footer-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.75rem 2rem;
-      border-top: 1px solid var(--dim);
-      font-size: 0.6rem;
-      letter-spacing: 0.12em;
+      padding: 0.35rem 1.5rem;
+      border-bottom: 1px solid var(--dim);
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--dimtext);
     }
 
-    .ticker {
+    .f-stat { color: var(--muted); }
+    .f-stat span { color: var(--white); }
+    .f-stat .hi  { color: var(--cyan); text-shadow: 0 0 6px var(--cyan); }
+    .f-stat .warn { color: var(--yellow); }
+    .f-stat .err  { color: var(--pink); }
+
+    /* BOTTOM ROW: scrolling marquee */
+    .ticker-wrap {
       display: flex;
       align-items: center;
-      gap: 1.5rem;
+      padding: 0.3rem 0;
+      overflow: hidden;
+      gap: 0;
     }
 
-    .ticker-item { color: var(--dimtext); }
-    .ticker-item span { color: var(--white); }
-    .ticker-item .up { color: var(--cyan); }
+    .ticker-label {
+      flex-shrink: 0;
+      padding: 0 0.75rem;
+      font-size: 0.5rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--cyan);
+      align-self: stretch;
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      font-weight: bold;
+    }
 
-    /* RESPONSIVE */
+    .ticker-track {
+      display: flex;
+      white-space: nowrap;
+      animation: scroll-left 22s linear infinite;
+    }
+
+    .ticker-inner {
+      display: flex;
+      gap: 0;
+      font-size: 0.5rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .ticker-inner .sep  { color: var(--dim); padding: 0 0.6rem; }
+    .ticker-inner .hi   { color: var(--cyan); }
+    .ticker-inner .warn { color: var(--yellow); }
+    .ticker-inner .err  { color: var(--pink); }
+    .ticker-inner .val  { color: var(--white); }
+
+    @keyframes scroll-left {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* MOBILE */
     @media (max-width: 480px) {
       .nav-right .status { display: none; }
-      .frame { padding: 2rem 1.25rem; gap: 1.5rem; }
+      .frame { padding: 1.25rem 1rem; gap: 0.9rem; }
       form { flex-direction: column; }
       form input[type="email"] { border-right: 1px solid var(--dim); border-bottom: none; }
       form input[type="email"]:focus { border-color: var(--cyan); }
-      .ticker { gap: 1rem; }
-      .ticker-item:last-child { display: none; }
+      .footer-top .f-stat:nth-child(3),
+      .footer-top .f-stat:nth-child(4) { display: none; }
     }
   </style>
 </head>
@@ -350,16 +357,16 @@
         <div class="status-dot"></div>
         Private beta
       </div>
-      <a href="#" class="nav-btn" onclick="document.querySelector('input[type=email]').focus();return false;">
+      <button class="nav-btn" onclick="document.querySelector('input[type=email]').focus()">
         Request access →
-      </a>
+      </button>
     </div>
   </nav>
 
   <main>
     <div class="frame">
-      <div class="frame-corner-tr"></div>
-      <div class="frame-corner-bl"></div>
+      <div class="frame-tr"></div>
+      <div class="frame-bl"></div>
 
       <p class="eyebrow">AI is built layer by layer. &nbsp;<span>Until now.</span></p>
 
@@ -374,7 +381,7 @@
         <strong>We collapsed the stack instead.</strong>
       </p>
 
-      <form onsubmit="submit(event)">
+      <form onsubmit="handleSubmit(event)">
         <input type="email" placeholder="your@email.com" required autocomplete="off" />
         <button type="submit">Enter the game</button>
       </form>
@@ -384,20 +391,77 @@
   </main>
 
   <footer>
-    <span>© 2026 XISTO</span>
-    <div class="ticker">
-      <span class="ticker-item">STACK LAYERS <span class="up">↓ COLLAPSED</span></span>
-      <span class="ticker-item">STATUS <span>PRIVATE BETA</span></span>
-      <span class="ticker-item">NODE <span class="up">ONLINE</span></span>
+    <div class="footer-top">
+      <span class="f-stat">SYS <span class="hi" id="uptime">00:00:00</span></span>
+      <span class="f-stat">LAYERS COLLAPSED <span class="hi">∞</span></span>
+      <span class="f-stat">STACK STATUS <span class="err">BROKEN</span></span>
+      <span class="f-stat">XISTO <span class="hi">ONLINE</span></span>
+    </div>
+
+    <div class="ticker-wrap">
+      <div class="ticker-label">// LIVE</div>
+      <div class="ticker-track">
+        <!-- duplicated for seamless loop -->
+        <div class="ticker-inner" id="t1"></div>
+        <div class="ticker-inner" id="t2"></div>
+      </div>
     </div>
   </footer>
 
   <script>
-    function submit(e) {
+    /* ── SUBMIT ── */
+    function handleSubmit(e) {
       e.preventDefault();
       document.getElementById('msg').textContent = '> ACCESS GRANTED — WE WILL FIND YOU.';
       e.target.reset();
     }
+
+    /* ── UPTIME CLOCK ── */
+    const start = Date.now();
+    function tick() {
+      const s = Math.floor((Date.now() - start) / 1000);
+      const h = String(Math.floor(s / 3600)).padStart(2,'0');
+      const m = String(Math.floor((s % 3600) / 60)).padStart(2,'0');
+      const sec = String(s % 60).padStart(2,'0');
+      document.getElementById('uptime').textContent = `${h}:${m}:${sec}`;
+    }
+    setInterval(tick, 1000);
+
+    /* ── TICKER ── */
+    const entries = [
+      ['NODE','<span class="val">XST-001</span>'],
+      ['LATENCY','<span class="hi" id="lat">--ms</span>'],
+      ['ABSTRACTION DEBT','<span class="err">CRITICAL</span>'],
+      ['LAYERS BURNED','<span class="hi" id="burned">0</span>'],
+      ['INFERENCE ENGINE','<span class="val">COLLAPSED</span>'],
+      ['PROTOCOL','<span class="warn">XISTO/v0.1-beta</span>'],
+      ['THROUGHPUT','<span class="hi" id="tp">--</span> <span class="val">req/s</span>'],
+      ['MODEL OVERHEAD','<span class="err">ELIMINATED</span>'],
+      ['MEMORY','<span class="hi" id="mem">--</span>'],
+      ['SIGNAL','<span class="warn">STRONG</span>'],
+      ['COPYRIGHT','<span class="val">© 2026 XISTO</span>'],
+      ['DIRECTIVE','<span class="warn">CHANGE THE GAME</span>'],
+    ];
+
+    function buildTicker() {
+      return entries.map(([k, v]) =>
+        `<span>${k}&nbsp;<span class="val">::</span>&nbsp;${v}</span><span class="sep">///</span>`
+      ).join('');
+    }
+
+    document.getElementById('t1').innerHTML = buildTicker();
+    document.getElementById('t2').innerHTML = buildTicker();
+
+    /* Live-updating ticker values */
+    function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+    function updateLive() {
+      document.querySelectorAll('#lat').forEach(el => el.textContent = rand(1,9) + 'ms');
+      document.querySelectorAll('#burned').forEach(el => el.textContent = rand(1000,9999).toLocaleString());
+      document.querySelectorAll('#tp').forEach(el => el.textContent = rand(10,99) + 'k');
+      document.querySelectorAll('#mem').forEach(el => el.textContent = rand(1,99) + 'MB');
+    }
+    updateLive();
+    setInterval(updateLive, 2000);
   </script>
 
 </body>
