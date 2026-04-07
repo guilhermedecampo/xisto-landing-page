@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Xisto — AI, Reimagined</title>
+  <meta name="description" content="AI is built layer by layer. Xisto comes to change the game." />
+  <link rel="icon" type="image/svg+xml" href="public/favicon.svg" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080810;
+      --surface: #0f0f1a;
+      --border: rgba(255,255,255,0.07);
+      --accent: #6c63ff;
+      --accent2: #00d4ff;
+      --text: #e8e8f0;
+      --muted: #6b6b80;
+      --white: #ffffff;
+    }
+
+    @font-face {
+      font-family: 'Atkinson';
+      src: url('public/fonts/atkinson-regular.woff') format('woff');
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: 'Atkinson';
+      src: url('public/fonts/atkinson-bold.woff') format('woff');
+      font-weight: 700;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Atkinson', 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 2.5rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(8,8,16,0.7);
+      backdrop-filter: blur(12px);
+    }
+
+    .logo {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--white) 40%, var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1.25rem;
+      border-radius: 100px;
+      background: rgba(108,99,255,0.15);
+      border: 1px solid rgba(108,99,255,0.4);
+      color: var(--accent2);
+      font-size: 0.875rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .nav-cta:hover {
+      background: rgba(108,99,255,0.3);
+      border-color: var(--accent2);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8rem 1.5rem 4rem;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    /* Radial glow */
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 700px;
+      height: 700px;
+      transform: translate(-50%, -58%);
+      background: radial-gradient(ellipse, rgba(108,99,255,0.18) 0%, rgba(0,212,255,0.06) 50%, transparent 72%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero > * { position: relative; z-index: 1; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 1rem;
+      border-radius: 100px;
+      border: 1px solid rgba(0,212,255,0.3);
+      background: rgba(0,212,255,0.08);
+      color: var(--accent2);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      animation: fadeUp 0.7s ease both;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent2);
+      box-shadow: 0 0 8px var(--accent2);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    h1 {
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      max-width: 14ch;
+      margin: 0 auto 1.5rem;
+      animation: fadeUp 0.7s 0.1s ease both;
+    }
+
+    h1 .line-dim { color: var(--muted); }
+    h1 .line-bright { color: var(--white); }
+    h1 .line-accent {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: var(--muted);
+      max-width: 50ch;
+      line-height: 1.7;
+      margin: 0 auto 3rem;
+      animation: fadeUp 0.7s 0.2s ease both;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp 0.7s 0.3s ease both;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 2rem;
+      border-radius: 100px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.2s;
+      box-shadow: 0 0 30px rgba(108,99,255,0.4);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 50px rgba(108,99,255,0.6);
+    }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 2rem;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover {
+      border-color: rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.05);
+    }
+
+    /* ── LAYERS VISUAL ── */
+    .layers-wrap {
+      position: relative;
+      margin: 5rem auto 0;
+      width: 100%;
+      max-width: 680px;
+      animation: fadeUp 0.7s 0.4s ease both;
+    }
+
+    .layers {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+    }
+
+    .layer {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.85rem 1.5rem;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      position: relative;
+      transition: all 0.3s;
+      cursor: default;
+    }
+
+    .layer:first-child { border-radius: 12px 12px 0 0; }
+    .layer:last-child  { border-radius: 0 0 12px 12px; }
+    .layer + .layer    { border-top: none; }
+
+    .layer:hover {
+      background: rgba(108,99,255,0.08);
+      border-color: rgba(108,99,255,0.3);
+      z-index: 2;
+    }
+
+    .layer-index {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      min-width: 1.5rem;
+      text-align: right;
+    }
+
+    .layer-bar {
+      flex: 1;
+      height: 6px;
+      border-radius: 100px;
+      background: var(--border);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .layer-fill {
+      height: 100%;
+      border-radius: 100px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform-origin: left;
+      animation: growBar 1.2s ease both;
+    }
+
+    @keyframes growBar {
+      from { transform: scaleX(0); }
+      to   { transform: scaleX(1); }
+    }
+
+    .layer:nth-child(1) .layer-fill { width: 35%; animation-delay: 0.4s; }
+    .layer:nth-child(2) .layer-fill { width: 52%; animation-delay: 0.55s; }
+    .layer:nth-child(3) .layer-fill { width: 70%; animation-delay: 0.7s; }
+    .layer:nth-child(4) .layer-fill { width: 85%; animation-delay: 0.85s; }
+    .layer:nth-child(5) .layer-fill { width: 100%; animation-delay: 1s; background: linear-gradient(90deg, var(--accent), var(--accent2), #fff); box-shadow: 0 0 16px rgba(0,212,255,0.5); }
+
+    .layer-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      min-width: 9rem;
+      text-align: right;
+      color: var(--muted);
+    }
+
+    .layer:nth-child(5) .layer-label {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .layer-xisto-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 100px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      box-shadow: 0 0 12px rgba(108,99,255,0.5);
+    }
+
+    /* ── SECTION ── */
+    section {
+      position: relative;
+      z-index: 1;
+      padding: 7rem 1.5rem;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 1.25rem;
+    }
+
+    .section-sub {
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      max-width: 52ch;
+    }
+
+    /* ── FEATURES GRID ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5px;
+      background: var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-top: 4rem;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      padding: 2rem;
+      transition: background 0.2s;
+    }
+    .feature-card:hover { background: rgba(108,99,255,0.06); }
+
+    .feature-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(108,99,255,0.15);
+      border: 1px solid rgba(108,99,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-card p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── MANIFESTO ── */
+    .manifesto {
+      text-align: center;
+      padding: 7rem 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .manifesto::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 600px;
+      height: 400px;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(ellipse, rgba(0,212,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .manifesto blockquote {
+      font-size: clamp(1.4rem, 3.5vw, 2.4rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      line-height: 1.35;
+      max-width: 720px;
+      margin: 0 auto 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .manifesto blockquote span { color: var(--muted); }
+
+    .manifesto cite {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-style: normal;
+      letter-spacing: 0.05em;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── CTA SECTION ── */
+    .cta-section {
+      padding: 7rem 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-box {
+      border-radius: 24px;
+      border: 1px solid rgba(108,99,255,0.3);
+      background: linear-gradient(135deg, rgba(108,99,255,0.1), rgba(0,212,255,0.05));
+      padding: 4rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-box::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+    }
+
+    .cta-box h2 {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+
+    .cta-box p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      margin-bottom: 2.5rem;
+      max-width: 42ch;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 2rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: gap;
+      gap: 1rem;
+    }
+
+    footer .logo { font-size: 1rem; }
+
+    footer p {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      nav { padding: 1rem 1.25rem; }
+      .layer-label { display: none; }
+      footer { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <span class="logo">xisto.ai</span>
+    <a href="#waitlist" class="nav-cta">
+      <span>Join waitlist</span>
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="badge">
+      <span class="badge-dot"></span>
+      Now in private beta
+    </div>
+
+    <h1>
+      <span class="line-dim">AI is built</span><br>
+      <span class="line-bright">layer by layer.</span><br>
+      <span class="line-accent">Xisto changes</span><br>
+      <span class="line-accent">the game.</span>
+    </h1>
+
+    <p class="hero-sub">
+      Every AI system stacks abstractions until it bends under its own weight.
+      Xisto rethinks the architecture — from the ground up.
+    </p>
+
+    <div class="hero-actions">
+      <a href="#waitlist" class="btn-primary">
+        Get early access
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="#how" class="btn-ghost">See how it works</a>
+    </div>
+
+    <!-- LAYER VISUALIZER -->
+    <div class="layers-wrap">
+      <div class="layers" aria-hidden="true">
+        <div class="layer">
+          <span class="layer-index">01</span>
+          <div class="layer-bar"><div class="layer-fill"></div></div>
+          <span class="layer-label">Raw compute</span>
+        </div>
+        <div class="layer">
+          <span class="layer-index">02</span>
+          <div class="layer-bar"><div class="layer-fill"></div></div>
+          <span class="layer-label">Foundation model</span>
+        </div>
+        <div class="layer">
+          <span class="layer-index">03</span>
+          <div class="layer-bar"><div class="layer-fill"></div></div>
+          <span class="layer-label">Alignment &amp; fine-tuning</span>
+        </div>
+        <div class="layer">
+          <span class="layer-index">04</span>
+          <div class="layer-bar"><div class="layer-fill"></div></div>
+          <span class="layer-label">Orchestration</span>
+        </div>
+        <div class="layer">
+          <span class="layer-index">05</span>
+          <div class="layer-bar"><div class="layer-fill"></div></div>
+          <span class="layer-label">
+            <span class="layer-xisto-badge">&#9889; xisto</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how">
+    <div class="container">
+      <p class="section-label">The problem</p>
+      <h2 class="section-title">Layers create friction.<br>We eliminate it.</h2>
+      <p class="section-sub">
+        The AI stack has grown into a tower of workarounds — each layer patching the one below.
+        Xisto rebuilds the interface between intelligence and action.
+      </p>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">&#9670;</div>
+          <h3>Zero-overhead orchestration</h3>
+          <p>Remove the glue code between models, tools, and memory. Xisto handles composition natively, not as an afterthought.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#9675;</div>
+          <h3>Adaptive reasoning</h3>
+          <p>Not every task needs the same depth. Xisto allocates cognitive resources dynamically — fast when it can, deep when it must.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#9633;</div>
+          <h3>Transparent by design</h3>
+          <p>Every decision is traceable. Xisto doesn't hide intelligence behind abstraction — it surfaces it where you need it.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#9651;</div>
+          <h3>Built to compound</h3>
+          <p>Each interaction makes the system smarter without ballooning cost. Intelligence that accrues, not one that resets.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#9711;</div>
+          <h3>Model agnostic</h3>
+          <p>Xisto doesn't bet on one provider. Swap models, combine them, or run local — the layer above stays the same.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#9650;</div>
+          <h3>From prototype to prod</h3>
+          <p>The same architecture that works at day one scales to millions of calls. No migration, no rewrite.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MANIFESTO -->
+  <section class="manifesto">
+    <blockquote>
+      <span>"The game isn't won by stacking more layers.</span>
+      It's won by knowing which layers to remove —
+      <span>and having the courage to build differently."</span>
+    </blockquote>
+    <cite>— The Xisto Manifesto</cite>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section" id="waitlist">
+    <div class="container">
+      <div class="cta-box">
+        <h2>Be first to change the game.</h2>
+        <p>Join the waitlist and get early access to Xisto when we open the doors.</p>
+        <form
+          style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;max-width:440px;margin:0 auto;"
+          onsubmit="handleSubmit(event)"
+        >
+          <input
+            type="email"
+            placeholder="your@email.com"
+            required
+            style="flex:1;min-width:200px;padding:0.85rem 1.25rem;border-radius:100px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#fff;font-size:0.95rem;outline:none;font-family:inherit;"
+            onfocus="this.style.borderColor='rgba(108,99,255,0.6)'"
+            onblur="this.style.borderColor='rgba(255,255,255,0.1)'"
+          />
+          <button type="submit" class="btn-primary" style="white-space:nowrap;">
+            Join waitlist
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </form>
+        <p id="form-msg" style="margin-top:1rem;font-size:0.85rem;color:var(--accent2);min-height:1.2em;margin-bottom:0;"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="logo">xisto.ai</span>
+    <p>&copy; 2026 Xisto. All rights reserved.</p>
+  </footer>
+
+  <script>
+    function handleSubmit(e) {
+      e.preventDefault();
+      const msg = document.getElementById('form-msg');
+      msg.textContent = "You're on the list. We'll be in touch.";
+      e.target.reset();
+    }
+  </script>
+
+</body>
+</html>
